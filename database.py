@@ -20,7 +20,7 @@ class Usuario(Base):
     correo_electronico = Column(String, unique=True, index=True)
     telefono = Column(String)
     # Para almacenar la contraseña de forma segura
-    hash_contraseña = Column(String)
+    hash_contrasenya = Column(String)
 
 
 class Clase(Base):
