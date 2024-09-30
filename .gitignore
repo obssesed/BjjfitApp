@@ -1,0 +1,12 @@
+# Ignorar el entorno virtual
+venv/
+
+# Archivos Python cache
+__pycache__/
+*.pyc
+
+# Archivos de bases de datos
+*.sqlite3
+
+# Archivos de logs
+*.log
