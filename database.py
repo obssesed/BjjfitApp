@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
 # Configuración de la base de datos SQLite
@@ -21,6 +21,7 @@ class Usuario(Base):
     telefono = Column(String)
     # Para almacenar la contraseña de forma segura
     hash_contrasenya = Column(String)
+    reservas = relationship("Reserva", back_populates="usuario")
 
 
 class Clase(Base):
@@ -55,7 +56,6 @@ class Ubicacion(Base):
     correo_contacto = Column(String, nullable=False)
 
 
-Usuario.reservas = relationship("Reserva", back_populates="usuario")
 Clase.reservas = relationship("Reserva", back_populates="clase")
 
 # Crear las tablas en la base de datos
@@ -63,6 +63,13 @@ Clase.reservas = relationship("Reserva", back_populates="clase")
 
 def crear_base_datos():
     Base.metadata.create_all(bind=motor)
+
+# Función para obtener una sesión de la base de datos
+
+
+def obtener_sesion():
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=motor)
+    return SessionLocal()
 
 
 if __name__ == "__main__":

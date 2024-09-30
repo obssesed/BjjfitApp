@@ -1,4 +1,3 @@
-# main.py
 import kivy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -44,46 +43,41 @@ class RegistroLoginApp(App):
             text='Iniciar Sesión', on_press=self.iniciar_sesion)
         self.layout.add_widget(self.login_button)
 
+        # ID del usuario autenticado
+        self.usuario_id = None
+
         return self.layout
 
     def validar_email(self, email):
-        # Usamos esta expresión regular para validar si el correo electrónico tiene un formato correcto
         regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(regex, email)
 
     def validar_contrasenya(self, contrasenya):
-        # La contraseña: debe tener más de 8 caracteres y al menos un carácter especial
         if len(contrasenya) < 9:
             return False
-        # Comprobar si hay al menos un carácter especial
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', contrasenya):
             return False
         return True
 
-    def validar_telefono(self, contrasenya):
-        # El teléfono debe tener 9 dígitos obligatoriamente
-        if len(contrasenya) != 9:
+    def validar_telefono(self, telefono):
+        if len(telefono) != 9:
             return False
         return True
 
     def registrar_usuario(self, instance):
-        # Validar campos vacíos
         if not self.nombre_usuario_input.text or not self.correo_input.text or not self.telefono_input.text or not self.contrasenya_input.text:
             self.mostrar_popup("Error", "Todos los campos son obligatorios.")
             return
 
-        # Validar correo electrónico
         if not self.validar_email(self.correo_input.text):
             self.mostrar_popup("Error", "El correo electrónico no es válido.")
             return
 
-        # Validar contraseña
         if not self.validar_contrasenya(self.contrasenya_input.text):
             self.mostrar_popup(
                 "Error", "La contraseña debe tener más de 8 caracteres y al menos un carácter especial.")
             return
 
-        # Validar teléfono
         if not self.validar_telefono(self.telefono_input.text):
             self.mostrar_popup(
                 "Error", "El número de teléfono que has introducido es incorrecto.")
@@ -104,12 +98,13 @@ class RegistroLoginApp(App):
         db: Session = obtener_sesion()
         usuario = autenticar_usuario(
             nombre_usuario=self.nombre_usuario_input.text,
-            contrasena=self.contrasenya_input.text,
+            contrasenya=self.contrasenya_input.text,
             db=db
         )
         if usuario:
+            self.usuario_id = usuario.id  # Guardar el ID del usuario autenticado
             self.mostrar_popup("Inicio de sesión exitoso",
-                               f"Bienvenido, {usuario.nombre_usuario}!")
+                               f"Bienvenido, {usuario.nombre_usuario}! (ID: {self.usuario_id})")
         else:
             self.mostrar_popup("Error", "Credenciales incorrectas.")
 
